@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Factory Manager Missions</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#cdeeff;--card:#fff;--ink:#2b2d42;--pri:#ff6b35;--ok:#2ecc71;--bad:#ff4d6d;--sun:#ffd23f;--soft:#fff4d6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17324a;--card:#24384d;--ink:#f1f5f9;--soft:#3a3f2a}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Comic Sans MS","Chalkboard SE","Marker Felt",system-ui,sans-serif;min-height:100vh}
+#app{max-width:760px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:4px solid var(--ink);border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:0 6px 0 var(--ink)}
+h1{margin:4px 0;font-size:clamp(26px,7vw,42px);color:var(--pri);text-shadow:2px 2px 0 var(--ink)}
+h2{margin:0 0 8px;font-size:20px}
+.top{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:bold}
+.pill{background:var(--sun);color:#2b2d42;border:3px solid var(--ink);border-radius:999px;padding:3px 12px}
+.bar{height:16px;background:#ddd;border:3px solid var(--ink);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .6s}
+button{font:inherit;font-weight:bold;font-size:18px;background:var(--pri);color:#fff;border:4px solid var(--ink);border-radius:16px;padding:10px 20px;cursor:pointer;box-shadow:0 4px 0 var(--ink)}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+button.alt{background:var(--ok)}
+.bot{display:flex;gap:10px;align-items:center}
+.bot .face{font-size:54px;animation:bob 1.5s ease-in-out infinite}
+.bub{background:var(--soft);border:3px solid var(--ink);border-radius:16px;padding:8px 12px;flex:1}
+@keyframes bob{50%{transform:translateY(-6px) rotate(6deg)}}
+table{border-collapse:collapse;width:100%;margin:8px 0}
+td,th{border:3px solid var(--ink);padding:6px;text-align:center}
+th{background:var(--sun);color:#2b2d42}
+.row{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}
+.row label{flex:1 1 220px;font-weight:bold}
+input{font:inherit;font-size:18px;width:130px;padding:8px;border:4px solid var(--ink);border-radius:12px;background:#fff;color:#222;text-align:center}
+input.ok{background:#b9f6ca}input.bad{background:#ffc2cc;animation:shake .3s}input.show{background:#fff2a8}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.msg{min-height:24px;font-weight:bold;margin:6px 0}
+svg{width:100%;height:auto;display:block}
+.part{opacity:0;transition:opacity .8s,transform .8s;transform:translateY(-14px)}
+.part.on{opacity:1;transform:none}
+.cf{position:fixed;top:-40px;font-size:28px;animation:fall 3.5s linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+.center{text-align:center}
+</style></head><body><div id="app"></div>
+<script>
+var M=[
+{p:[["Gizmo",10000,2,3,50]],r:3,oh:120000},
+{p:[["A",4000,8,6,30],["B",5000,6,3,50]],r:5,oh:80000},
+{p:[["Widget",5000,4,2,20]],r:6,oh:100000},
+{p:[["A",2000,4,2,40],["B",3000,2,4,25]],r:4,oh:60000},
+{p:[["Gadget",8000,3,5,35]],r:4,oh:96000},
+{p:[["A",1000,5,2,60],["B",4000,2,3,30]],r:6,oh:90000},
+{p:[["Robo",6000,5,4,45]],r:5,oh:150000},
+{p:[["A",3000,3,5,25],["B",2000,6,2,55]],r:4,oh:84000}];
+var BASE=["Unit","Labour hour","Machine hour"];
+var st,tip=["Nice start!","Great job, boss!","You’re on fire!","Numbers love you!","Halfway hero!","Cost ninja!","Almost there!","Last one, champion!"];
+function $(i){return document.getElementById(i)}
+function f2(x){return x.toFixed(2)}
+function calc(m){var tu=0,tl=0,tm=0;m.p.forEach(function(q){tu+=q[1];tl+=q[1]*q[2];tm+=q[1]*q[3]});
+var oar=[m.oh/tu,m.oh/tl,m.oh/tm];
+return{tu:tu,tl:tl,tm:tm,oar:oar,pr:m.p.map(function(q){var dl=q[2]*m.r,pc=q[4]+dl;return{n:q[0],dl:dl,pc:pc,c:[pc+oar[0],pc+oar[1]*q[2],pc+oar[2]*q[3]]}})}}
+function fields(mi,s){var m=M[mi],c=calc(m),F=[];
+if(s==0){BASE.forEach(function(b,i){F.push({l:"OAR per "+b.toLowerCase()+" (RM)",a:c.oar[i],t:.02})});
+return{F:F,h:"OAR = Budgeted overhead ÷ Budgeted base. Totals: units = "+c.tu+", labour hours = "+c.tl+", machine hours = "+c.tm+"."}}
+if(s==1){c.pr.forEach(function(q,i){var nm=m.p.length>1?" – Product "+q.n:"";F.push({l:"Direct labour"+nm+" (RM/unit)",a:q.dl,t:.01});F.push({l:"Prime cost"+nm+" (RM/unit)",a:q.pc,t:.01})});
+return{F:F,h:"Direct labour = labour hours per unit × labour rate (RM"+m.r+"). Prime cost = direct material + direct labour."}}
+c.pr.forEach(function(q,i){BASE.forEach(function(b,j){F.push({l:"Production cost"+(m.p.length>1?" – Product "+q.n:"")+" using "+b.toLowerCase()+" OAR",a:q.c[j],t:.1})})});
+return{F:F,h:"Production cost = Prime cost + OAR. Unit basis: add OAR as is. Labour hour basis: OAR × labour hrs per unit. Machine hour basis: OAR × machine hrs per unit."}}
+function maxm(mi){var n=M[mi].p.length;return 3+2*n+3*n}
+function factory(k){var P=[
+'<rect x="20" y="138" width="260" height="14" rx="6" fill="#8d99ae"/>',
+'<rect x="60" y="78" width="170" height="62" fill="#ffb703" stroke="#2b2d42" stroke-width="3"/>',
+'<rect x="132" y="104" width="28" height="36" rx="4" fill="#8b5e3c" stroke="#2b2d42" stroke-width="3"/>',
+'<rect x="72" y="92" width="detail" height="0"/><rect x="74" y="92" width="38" height="22" fill="#8ecae6" stroke="#2b2d42" stroke-width="3"/><rect x="180" y="92" width="38" height="22" fill="#8ecae6" stroke="#2b2d42" stroke-width="3"/>',
+'<polygon points="50,80 145,40 240,80" fill="#e63946" stroke="#2b2d42" stroke-width="3"/>',
+'<rect x="190" y="30" width="18" height="32" fill="#6c757d" stroke="#2b2d42" stroke-width="3"/><text x="188" y="22" font-size="20">💨</text>',
+'<text x="118" y="75" font-size="40">⚙️</text>',
+'<text x="224" y="34" font-size="30">🚩</text><text x="14" y="40" font-size="34">☀️</text><text x="248" y="134" font-size="26">🎉</text>'];
+return'<svg viewBox="0 0 300 160" role="img" aria-label="Your factory"><rect width="300" height="160" rx="14" fill="#9be7ff"/>'+P.map(function(p,i){return'<g class="part'+(i<k?' on':'')+'">'+p+'</g>'}).join("")+'</svg>'}
+function home(){$("app").innerHTML='<div class="card center"><h1>🏭 Factory Manager Missions</h1><div class="bot"><div class="face">🤖</div><div class="bub">Hi! I’m <b>Bolt</b>. Our factory has no building yet! Be our cost accountant, finish all <b>8 missions</b> and we will build it together!</div></div>'+factory(0)+'<p>Each mission has <b>3 steps</b>: ① Find the OARs ② Find the prime cost ③ Find the production cost per unit.<br>Round answers to 2 decimal places. ⭐ Right first time = 1 mark, second try = ½ mark.</p><div class="row" style="justify-content:center"><label for="nm" style="flex:0 0 130px">👤 Your name</label><input id="nm" type="text" maxlength="40" style="width:240px" placeholder="Type your full name"></div><div class="row" style="justify-content:center"><label for="sid" style="flex:0 0 130px">🆔 Student ID</label><input id="sid" type="text" maxlength="20" style="width:240px" placeholder="Type your student ID"></div><div class="msg" id="err" style="color:var(--bad)"></div><button onclick="start()">▶ Start Mission 1</button></div>'}
+function esc(t){return t.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function start(){var n=$("nm").value.trim(),d=$("sid").value.trim();if(!n||!d){$("err").textContent="Please type your name and student ID first!";return}st={m:0,s:0,att:0,sc:[],ms:0,lock:[],pts:0,name:n,id:d};show()}
+function show(){var m=M[st.m],o=fields(st.m,st.s);st.o=o;st.att=0;st.lock=o.F.map(function(){return 0});
+var h='<div class="card"><div class="top"><span class="pill">Mission '+(st.m+1)+' / 8</span><span class="pill">⭐ Score: <span id="sc">'+st.pts+'</span></span></div><div class="bar"><i style="width:'+(st.m/8*100)+'%"></i></div></div>';
+h+='<div class="card">'+factory(st.m)+'</div>';
+h+='<div class="card"><div class="bot"><div class="face">🤖</div><div class="bub">'+(m.p.length>1?"We make <b>two products</b> this time. Look at the data below!":"We make <b>one product</b> this time. Look at the data below!")+'</div></div><table><tr><th>'+(m.p.length>1?"Product":"Product")+'</th>'+m.p.map(function(q){return'<th>'+q[0]+'</th>'}).join("")+'</tr>'+
+[["Units produced",1],["Labour hours per unit",2],["Machine hours per unit",3],["Direct material per unit (RM)",4]].map(function(r){return'<tr><td>'+r[0]+'</td>'+m.p.map(function(q){return'<td>'+q[r[1]]+'</td>'}).join("")+'</tr>'}).join("")+'</table><div class="pill" style="display:inline-block">Labour rate: RM'+m.r+' / hour</div> <div class="pill" style="display:inline-block">Production overhead: RM'+m.oh.toLocaleString()+'</div></div>';
+h+='<div class="card"><h2>Step '+(st.s+1)+' of 3 — '+["Overhead Absorption Rates","Direct labour &amp; prime cost","Production cost per unit"][st.s]+'</h2>'+o.F.map(function(f,i){return'<div class="row"><label for="i'+i+'">'+f.l+'</label><input id="i'+i+'" type="number" step="any" inputmode="decimal" placeholder="?"></div>'}).join("")+'<div class="msg" id="msg"></div><button id="go" onclick="check()">✔ Check my answers</button></div>';
+$("app").innerHTML=h;
+document.querySelectorAll("input").forEach(function(e){e.addEventListener("keydown",function(k){if(k.key=="Enter")$("go").click()})})}
+function check(){if($("go").dataset.n){return nxt()}
+var o=st.o,left=0,gain=0;
+o.F.forEach(function(f,i){if(st.lock[i])return;var e=$("i"+i),v=parseFloat(e.value);
+if(!isNaN(v)&&Math.abs(v-f.a)<=f.t){st.lock[i]=1;e.className="ok";e.readOnly=true;gain+=st.att==0?1:.5}else{e.className="bad";left++}});
+st.att++;st.pts+=gain;st.ms+=gain;$("sc").textContent=st.pts;
+var msg=$("msg");
+if(left==0){msg.textContent="🎉 Perfect! Well done!"}
+else if(st.att>=2){o.F.forEach(function(f,i){if(!st.lock[i]){var e=$("i"+i);e.value=f2(f.a);e.className="show";e.readOnly=true;st.lock[i]=1}});msg.textContent="😅 No worries! The correct answers are shown in yellow. Learn from them!";left=0}
+else{msg.textContent="💡 Hint: "+o.h+" Fix the red boxes and try again!"}
+if(left==0){var g=$("go");g.dataset.n=1;g.className="alt";g.textContent=(st.s==2?(st.m==7?"🏆 Finish!":"🏗️ Build my factory!"):"Next step ➜")}}
+function nxt(){if(st.s<2){st.s++;show();return}
+st.sc[st.m]=st.ms;st.ms=0;
+if(st.m==7){st.m=8;return end()}
+st.m++;st.s=0;var m=st.m;
+$("app").innerHTML='<div class="card center"><h1>🎊 Mission '+m+' complete!</h1>'+factory(m)+'<div class="bot"><div class="face">🤖</div><div class="bub">'+tip[m-1]+' The factory grows! Score so far: <b>'+st.pts+'</b></div></div><br><button class="alt" onclick="show()">▶ Start Mission '+(m+1)+'</button></div>';
+setTimeout(function(){},0)}
+function end(){var T=0,h='';M.forEach(function(x,i){T+=maxm(i)});
+var pc=Math.round(st.pts/T*100),gr=pc>=90?"🏆 Master Accountant!":pc>=70?"🌟 Super Cost Hero!":pc>=50?"👍 Good effort – keep practising!":"💪 Keep trying – you can do it!";
+h='<div class="card center"><h1>🏆 YOU WIN! 🏆</h1>'+factory(8)+'<div class="bot"><div class="face">🤖</div><div class="bub">Hooray! You finished all 8 missions and the factory is built! 🎉</div></div><h2 style="margin:12px 0 0">👤 '+esc(st.name)+' &nbsp;|&nbsp; 🆔 '+esc(st.id)+'</h2><h2 style="margin-top:6px">Final Score: '+st.pts+' / '+T+' ('+pc+'%)</h2><div class="pill" style="display:inline-block">'+gr+'</div><table><tr><th>Mission</th><th>Marks</th></tr>'+M.map(function(x,i){return'<tr><td>Mission '+(i+1)+'</td><td>'+st.sc[i]+' / '+maxm(i)+'</td></tr>'}).join("")+'<tr><th>Total</th><th>'+st.pts+' / '+T+'</th></tr></table><button onclick="home()">🔄 Play again</button></div>';
+$("app").innerHTML=h;
+for(var i=0;i<40;i++){(function(i){setTimeout(function(){var s=document.createElement("span");s.className="cf";s.textContent=["🎉","⭐","🎊","🏆"][i%4];s.style.left=Math.random()*95+"vw";document.body.appendChild(s);setTimeout(function(){s.remove()},3600)},i*90)})(i)}}
+home();
+</script></body></html>
